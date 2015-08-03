@@ -1,0 +1,8 @@
+<a class="btn {{css}} alpixel_modal_button"  data-target="#alpixelFormModal_{{modalId}}">
+    <i class="fa fa-plus-circle"></i>
+    {{label}}
+</a>
+{% include "AlpixelFormBundle:front:blocks/modal_empty.html.twig" with {
+    modalId: modalId,
+    source: path(path, parameters),
+} %}

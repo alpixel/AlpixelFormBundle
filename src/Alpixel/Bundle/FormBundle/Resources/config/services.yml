@@ -1,0 +1,25 @@
+services:
+
+    entity_id.type:
+        class: Alpixel\Bundle\FormBundle\Type\EntityIdType
+        arguments: [@doctrine]
+        tags:
+            - { name: form.type, alias: alpixel_entity_id }
+
+    select2.type:
+        class: Alpixel\Bundle\FormBundle\Type\Select2Type
+        arguments: [@doctrine]
+        tags:
+            - { name: form.type, alias: alpixel_select2 }
+
+    alpixel.builder.form_modal:
+        class: Alpixel\Bundle\FormBundle\Builder\ModalFormBuilder
+        arguments: [@doctrine, @session, @templating]
+
+    twig.extension.form_modal:
+        class:  Alpixel\Bundle\FormBundle\Twig\Extension\ModalFormExtension
+        arguments: []
+        tags:
+            - { name: twig.extension }
+
+
