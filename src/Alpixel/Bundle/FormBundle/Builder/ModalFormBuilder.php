@@ -34,16 +34,16 @@ class ModalFormBuilder
         return $response;
     }
 
-    public function handleForm(Form $form, Subscription &$subscription) {
+    public function handleForm(Form $form, &$object) {
         $entityManager = $this->registry->getManager();
 
         if ($form->isValid()) {
-            $entityManager->persist($subscription);
+            $entityManager->persist($object);
             $entityManager->flush();
 
             $this->session->getFlashBag()->add(
                 'success',
-                'L\'abonnement a bien été sauvegardé'
+                'L\'élément a bien été sauvegardé'
             );
         }
     }
