@@ -19,6 +19,7 @@ var xhr;
     function updateModal(modal, values, icon) {
         if(xhr != undefined)
             xhr.abort();
+
         xhr = $.post(modal.attr('data-source'), values, function(data){
 
             if(data.submitted == true && data['errors'] == 0) {
@@ -30,19 +31,24 @@ var xhr;
                 }
 
                 modal.find('.modal-dialog').html(data.html);
-                modal.one('shown.bs.modal', function(){
-                    remoteCallback(modal);
-                });
                 modal.find('form').on('submit', function(e){
                     e.preventDefault();
                     updateModal(modal, $(this).serialize());
                 });
-                modal.modal('show');
+
+                if(modal.is(':visible')) {
+                    remoteCallback(modal);
+                } else {
+                    modal.one('shown.bs.modal', function(){
+                        remoteCallback(modal);
+                    });
+                    modal.modal('show');
+                }
             }
         });
     }
 
     function remoteCallback(modal) {
-        modal.find('.select2').select2();
+        modal.trigger('modal:updated');
     }
 })(jQuery);
