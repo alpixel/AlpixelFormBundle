@@ -8,6 +8,9 @@
       <h4 class="modal-title">{% block modalTitle %}Chargement en cours...{% endblock %}</h4>
     </div>
     <div class="modal-body">
+        {% if form is defined and form_errors(form) is not empty %}
+            {{form_errors(form)}}
+        {% endif %}
         {% block modalContent %}<i class="fa fa-spinner fa-spin fa-5x text-light-blue center-block"></i>{% endblock %}
     </div>
     <div class="modal-footer">

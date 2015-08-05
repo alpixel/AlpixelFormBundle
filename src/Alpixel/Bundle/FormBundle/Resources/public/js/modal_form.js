@@ -15,40 +15,40 @@ var xhr;
             })
         ;
     });
-
-    function updateModal(modal, values, icon) {
-        if(xhr != undefined)
-            xhr.abort();
-
-        xhr = $.post(modal.attr('data-source'), values, function(data){
-
-            if(data.submitted == true && data['errors'] == 0) {
-                document.location.reload();
-            } else {
-                if(icon != undefined) {
-                    icon.addClass('fa-plus-circle');
-                    icon.removeClass('fa-spinner fa-pulse');
-                }
-
-                modal.find('.modal-dialog').html(data.html);
-                modal.find('form').on('submit', function(e){
-                    e.preventDefault();
-                    updateModal(modal, $(this).serialize());
-                });
-
-                if(modal.is(':visible')) {
-                    remoteCallback(modal);
-                } else {
-                    modal.one('shown.bs.modal', function(){
-                        remoteCallback(modal);
-                    });
-                    modal.modal('show');
-                }
-            }
-        });
-    }
-
-    function remoteCallback(modal) {
-        modal.trigger('modal:updated');
-    }
 })(jQuery);
+
+function updateModal(modal, values, icon) {
+    if(xhr != undefined)
+        xhr.abort();
+
+    xhr = jQuery.post(modal.attr('data-source'), values, function(data){
+
+        if(data.submitted == true && data['errors'] == 0) {
+            document.location.reload();
+        } else {
+            if(icon != undefined) {
+                icon.addClass('fa-plus-circle');
+                icon.removeClass('fa-spinner fa-pulse');
+            }
+
+            modal.find('.modal-dialog').html(data.html);
+            modal.find('form').on('submit', function(e){
+                e.preventDefault();
+                updateModal(modal, jQuery(this).serialize());
+            });
+
+            if(modal.is(':visible')) {
+                remoteCallback(modal);
+            } else {
+                modal.one('shown.bs.modal', function(){
+                    remoteCallback(modal);
+                });
+                modal.modal('show');
+            }
+        }
+    });
+}
+
+function remoteCallback(modal) {
+    modal.trigger('modal:updated');
+}
