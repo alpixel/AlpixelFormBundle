@@ -27,16 +27,16 @@ class FormCookieSubscriber implements EventSubscriberInterface
     public function onPreSetData(FormEvent $event)
     {
         $form     = $event->getForm();
-        $formName = $form->getConfig()->getName();
+        $formName = 'filter_form_'.$form->getConfig()->getName();
 
-        if($this->session->has('filter_form_'.$formName)) {
-            $filters = $this->session->get('filter_form_'.$formName);
+        if($this->session->has($formName)) {
+            $filters = $this->session->get($formName);
 
             foreach($filters as $field=>&$value) {
-                $field = $form->get($field);
-                if($field->getConfig()->getType()->getName() == 'entity') {
-                    $entityManager = $field->getConfig()->getOption('em');
-                    $className     = $field->getConfig()->getOption('class');
+                $fieldConfig = $form->get($field)->getConfig();
+                if($fieldConfig->getType()->getName() == 'entity') {
+                    $entityManager = $fieldConfig->getOption('em');
+                    $className     = $fieldConfig->getOption('class');
                     $value = $entityManager
                                 ->getRepository($className)
                                 ->find($value);
