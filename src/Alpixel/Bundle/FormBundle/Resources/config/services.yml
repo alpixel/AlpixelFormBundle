@@ -22,4 +22,6 @@ services:
         tags:
             - { name: twig.extension }
 
-
+    alpixel.subscriber.form_cookie:
+        class: Alpixel\Bundle\FormBundle\Subscribers\FormCookieSubscriber
+        arguments: [@session]

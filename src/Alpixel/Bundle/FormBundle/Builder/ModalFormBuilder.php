@@ -46,6 +46,8 @@ class ModalFormBuilder
                 'L\'élément a bien été sauvegardé'
             );
         }
+
+        return $object;
     }
 
 }
