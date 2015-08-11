@@ -33,13 +33,15 @@ class FormCookieSubscriber implements EventSubscriberInterface
             $filters = $this->session->get($formName);
 
             foreach($filters as $field=>&$value) {
-                $fieldConfig = $form->get($field)->getConfig();
-                if($fieldConfig->getType()->getName() == 'entity') {
-                    $entityManager = $fieldConfig->getOption('em');
-                    $className     = $fieldConfig->getOption('class');
-                    $value = $entityManager
-                                ->getRepository($className)
-                                ->find($value);
+                if($form->has($field)) {
+                    $fieldConfig = $form->get($field)->getConfig();
+                    if($fieldConfig->getType()->getName() == 'entity') {
+                        $entityManager = $fieldConfig->getOption('em');
+                        $className     = $fieldConfig->getOption('class');
+                        $value = $entityManager
+                                    ->getRepository($className)
+                                    ->find($value);
+                    }
                 }
             }
 
