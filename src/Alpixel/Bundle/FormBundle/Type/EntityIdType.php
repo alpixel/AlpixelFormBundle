@@ -2,15 +2,14 @@
 
 namespace Alpixel\Bundle\FormBundle\Type;
 
-use Symfony\Component\Form\AbstractType;
+use Alpixel\Bundle\FormBundle\DataTransformer\EntityToIdTransformer;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\FormInterface;
-
-use Alpixel\Bundle\DataTransformer\EntityToIdTransformer;
 
 /**
  * Entity identitifer
