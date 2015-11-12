@@ -24,6 +24,7 @@ function updateModal(modal, values, icon) {
     xhr = jQuery.post(modal.attr('data-source'), values, function(data){
 
         if(data.submitted == true && data['errors'] == 0) {
+            modal.trigger('modal:show');
             document.location.reload();
         } else {
             if(icon != undefined) {
