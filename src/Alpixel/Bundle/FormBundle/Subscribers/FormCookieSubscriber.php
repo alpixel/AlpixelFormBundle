@@ -3,6 +3,7 @@
 namespace Alpixel\Bundle\FormBundle\Subscribers;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -21,13 +22,14 @@ class FormCookieSubscriber implements EventSubscriberInterface
         return array(
             FormEvents::PRE_SET_DATA => 'onPreSetData',
             FormEvents::PRE_SUBMIT   => 'onPreSubmit',
+            FormEvents::POST_SUBMIT  => 'onPostSubmit',
         );
     }
 
     public function onPreSetData(FormEvent $event)
     {
         $form     = $event->getForm();
-        $formName = 'filter_form_'.$form->getConfig()->getName();
+        $formName = $this->getSessionName($form);
 
         if($this->session->has($formName)) {
             $filters = $this->session->get($formName);
@@ -53,14 +55,37 @@ class FormCookieSubscriber implements EventSubscriberInterface
 
             $event->setData($filters);
         }
+
+        $form->add('reset', 'reset', array(
+            'label' => 'Réinitialiser le formulaire',
+            'attr'  => array(
+                'class' => 'btn btn-warning reset-cookie-form-action',
+            )
+        ));
     }
 
     public function onPreSubmit(FormEvent $event)
     {
-        $filters  = $event->getData();
-        $formName = $event->getForm()->getConfig()->getName();
+        $filters = $event->getData();
+        $form    = $event->getForm();
 
-        $this->session->set('filter_form_'.$formName, $filters);
+        $this->session->set($this->getSessionName($form), $filters);
+    }
+
+    public function onPostSubmit(FormEvent $event)
+    {
+        $form     = $event->getForm();
+        $reset    = $form->get('reset');
+        $formName = $this->getSessionName($form);
+
+        if($reset->isSubmitted() && $this->session->has($formName)) {
+            $this->session->remove($formName);
+        }
+    }
+
+    private function getSessionName(Form $form)
+    {
+        return 'filter_form_'.$form->getConfig()->getName();
     }
 
 }
