@@ -25,7 +25,11 @@ function updateModal(modal, values, icon) {
 
         if(data.submitted == true && data['errors'] == 0) {
             modal.trigger('modal:show');
-            document.location.reload();
+            if(data['callback'] != undefined){
+                document.location.href = data['callback'];
+            } else {
+                document.location.reload();
+            }
         } else {
             if(icon != undefined) {
                 icon.addClass('fa-plus-circle');

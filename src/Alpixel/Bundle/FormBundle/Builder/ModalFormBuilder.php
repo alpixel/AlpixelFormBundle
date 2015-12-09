@@ -22,15 +22,15 @@ class ModalFormBuilder
         $this->templating   = $templating;
     }
 
-    public function createView(Form $form, $template, $parameters) {
+    public function createView(Form $form, $template, $parameters, $extraParameters = array()) {
         $html = $this->templating->render($template, $parameters);
 
         $response = new JsonResponse;
-        $response->setData(array(
+        $response->setData(array_merge($extraParameters, array(
             "submitted" => $form->isSubmitted(),
             "errors"    => count($form->getErrors(true)),
             "html"      => $html,
-        ));
+        )));
         return $response;
     }
 
