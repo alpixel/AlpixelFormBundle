@@ -21,11 +21,12 @@ class ModalFormExtension extends \Twig_Extension
         );
     }
 
-    public function createButton(\Twig_Environment $twig, $path, $parameters, $label, $css) {
+    public function createButton(\Twig_Environment $twig, $path, $parameters, $label, $css, $btn = null) {
         return $twig->render('AlpixelFormBundle:front:blocks/modal_button.html.twig', array(
             'path'       => $path,
             'parameters' => $parameters,
             'label'      => $label,
+            'btn'        => (isset($btn) ? $btn : 'plus-circle'),
             'css'        => $css,
             'modalId'    => uniqid(),
         ));
