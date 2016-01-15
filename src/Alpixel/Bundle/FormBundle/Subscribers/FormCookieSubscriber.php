@@ -56,12 +56,7 @@ class FormCookieSubscriber implements EventSubscriberInterface
             $event->setData($filters);
         }
 
-        $form->add('reset', 'reset', array(
-            'label' => 'Réinitialiser le formulaire',
-            'attr'  => array(
-                'class' => 'btn btn-warning reset-cookie-form-action',
-            )
-        ));
+        $form->add('reset', 'hidden');
     }
 
     public function onPreSubmit(FormEvent $event)
