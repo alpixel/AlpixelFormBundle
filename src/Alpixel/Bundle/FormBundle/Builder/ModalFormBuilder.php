@@ -2,7 +2,6 @@
 
 namespace Alpixel\Bundle\FormBundle\Builder;
 
-use SubscriptionBundle\Entity\Subscription;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,24 +16,27 @@ class ModalFormBuilder
 
     public function __construct(RegistryInterface $registry, Session $session, EngineInterface $templating)
     {
-        $this->registry     = $registry;
-        $this->session      = $session;
-        $this->templating   = $templating;
+        $this->registry = $registry;
+        $this->session = $session;
+        $this->templating = $templating;
     }
 
-    public function createView(Form $form, $template, $parameters, $extraParameters = array()) {
+    public function createView(Form $form, $template, $parameters, $extraParameters = [])
+    {
         $html = $this->templating->render($template, $parameters);
 
-        $response = new JsonResponse;
-        $response->setData(array_merge($extraParameters, array(
-            "submitted" => $form->isSubmitted(),
-            "errors"    => count($form->getErrors(true)),
-            "html"      => $html,
-        )));
+        $response = new JsonResponse();
+        $response->setData(array_merge($extraParameters, [
+            'submitted' => $form->isSubmitted(),
+            'errors'    => count($form->getErrors(true)),
+            'html'      => $html,
+        ]));
+
         return $response;
     }
 
-    public function handleForm(Form $form, &$object) {
+    public function handleForm(Form $form, &$object)
+    {
         $entityManager = $this->registry->getManager();
 
         if ($form->isValid()) {
@@ -49,5 +51,4 @@ class ModalFormBuilder
 
         return $object;
     }
-
 }

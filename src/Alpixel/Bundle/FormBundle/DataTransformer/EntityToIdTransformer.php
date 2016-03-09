@@ -2,20 +2,17 @@
 
 namespace Alpixel\Bundle\FormBundle\DataTransformer;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\FormException;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-use Doctrine\ORM\NoResultException;
-
 /**
- * Data transformation class
+ * Data transformation class.
  *
  * @author Gregwar <g.passault@gmail.com>
  */
@@ -52,15 +49,15 @@ class EntityToIdTransformer implements DataTransformerInterface
 
     public function transform($data)
     {
-        if (null === $data) {
-            return null;
+        if (null === $data || trim($data) === '') {
+            return;
         }
 
         if (!$this->multiple) {
             return $this->transformSingleEntity($data);
         }
 
-        $return = array();
+        $return = [];
 
         foreach ($data as $element) {
             $return[] = $this->transformSingleEntity($element);
@@ -74,7 +71,6 @@ class EntityToIdTransformer implements DataTransformerInterface
         return is_array($data) ? $data : explode(',', $data);
     }
 
-
     protected function transformSingleEntity($data)
     {
         if (!$this->unitOfWork->isInIdentityMap($data)) {
@@ -83,6 +79,7 @@ class EntityToIdTransformer implements DataTransformerInterface
 
         if ($this->property) {
             $propertyAccessor = new PropertyAccessor();
+
             return $propertyAccessor->getValue($data, $this->property);
         }
 
@@ -92,14 +89,14 @@ class EntityToIdTransformer implements DataTransformerInterface
     public function reverseTransform($data)
     {
         if (!$data) {
-            return null;
+            return;
         }
 
         if (!$this->multiple) {
             return $this->reverseTransformSingleEntity($data);
         }
 
-        $return = array();
+        $return = [];
 
         foreach ($this->splitData($data) as $element) {
             $return[] = $this->reverseTransformSingleEntity($element);
@@ -126,7 +123,7 @@ class EntityToIdTransformer implements DataTransformerInterface
             }
         } else {
             if ($this->property) {
-                $result = $repository->findOneBy(array($this->property => $data));
+                $result = $repository->findOneBy([$this->property => $data]);
             } else {
                 $result = $repository->find($data);
             }
