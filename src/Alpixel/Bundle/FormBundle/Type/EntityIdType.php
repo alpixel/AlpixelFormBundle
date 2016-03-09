@@ -9,11 +9,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Entity identitifer
- *
+ * Entity identitifer.
  */
 class EntityIdType extends AbstractType
 {
@@ -37,17 +35,17 @@ class EntityIdType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setRequired(array(
+        $resolver->setRequired([
             'class',
-        ));
+        ]);
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'em'            => null,
             'property'      => null,
             'query_builder' => null,
             'hidden'        => true,
             'multiple'      => false,
-        ));
+        ]);
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options)

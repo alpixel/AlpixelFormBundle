@@ -19,29 +19,29 @@ class FormCookieSubscriber implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             FormEvents::PRE_SET_DATA => 'onPreSetData',
             FormEvents::PRE_SUBMIT   => 'onPreSubmit',
             FormEvents::POST_SUBMIT  => 'onPostSubmit',
-        );
+        ];
     }
 
     public function onPreSetData(FormEvent $event)
     {
-        $form     = $event->getForm();
+        $form = $event->getForm();
         $formName = $this->getSessionName($form);
 
-        if($this->session->has($formName)) {
+        if ($this->session->has($formName)) {
             $filters = $this->session->get($formName);
 
-            foreach($filters as $field=>&$value) {
-                if($form->has($field)) {
+            foreach ($filters as $field => &$value) {
+                if ($form->has($field)) {
                     $fieldConfig = $form->get($field)->getConfig();
-                    $fieldType   = $fieldConfig->getType()->getName();
-                    switch($fieldType) {
+                    $fieldType = $fieldConfig->getType()->getName();
+                    switch ($fieldType) {
                         case 'entity':
                             $entityManager = $fieldConfig->getOption('em');
-                            $className     = $fieldConfig->getOption('class');
+                            $className = $fieldConfig->getOption('class');
                             $value = $entityManager
                                         ->getRepository($className)
                                         ->find($value);
@@ -56,18 +56,18 @@ class FormCookieSubscriber implements EventSubscriberInterface
             $event->setData($filters);
         }
 
-        $form->add('reset', 'reset', array(
+        $form->add('reset', 'reset', [
             'label' => 'Réinitialiser le formulaire',
-            'attr'  => array(
+            'attr'  => [
                 'class' => 'btn btn-warning reset-cookie-form-action',
-            )
-        ));
+            ],
+        ]);
     }
 
     public function onPreSubmit(FormEvent $event)
     {
         $filters = $event->getData();
-        $form    = $event->getForm();
+        $form = $event->getForm();
 
         $this->session->set($this->getSessionName($form), $filters);
     }
@@ -76,10 +76,10 @@ class FormCookieSubscriber implements EventSubscriberInterface
     {
         $form = $event->getForm();
         if ($form->get('reset') instanceof Form) {
-            $reset    = $form->get('reset');
+            $reset = $form->get('reset');
             $formName = $this->getSessionName($form);
 
-            if($reset->isSubmitted() === true && $this->session->has($formName) === true) {
+            if ($reset->isSubmitted() === true && $this->session->has($formName) === true) {
                 $this->session->remove($formName);
             }
         }
@@ -89,5 +89,4 @@ class FormCookieSubscriber implements EventSubscriberInterface
     {
         return 'filter_form_'.$form->getConfig()->getName();
     }
-
 }
