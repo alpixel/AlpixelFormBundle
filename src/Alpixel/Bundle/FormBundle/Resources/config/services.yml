@@ -28,3 +28,9 @@ services:
     alpixel_form.form_cookie.form_cookie:
         class: Alpixel\Bundle\FormBundle\FormCookie\FormCookie
         arguments: ["@session"]
+
+    alpixel_form.extension.form_cookie:
+        class: Alpixel\Bundle\FormBundle\Twig\Extension\FormCookieExtension
+        arguments: ["@alpixel_form.form_cookie.form_cookie"]
+        tags:
+            - { name: twig.extension }
