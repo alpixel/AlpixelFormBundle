@@ -4,7 +4,6 @@ namespace Alpixel\Bundle\FormBundle\FormCookie;
 
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormView;
-=======
 use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
