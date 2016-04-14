@@ -1,5 +1,4 @@
 services:
-
     entity_id.type:
         class: Alpixel\Bundle\FormBundle\Type\EntityIdType
         arguments: ["@doctrine"]
@@ -24,4 +23,8 @@ services:
 
     alpixel.subscriber.form_cookie:
         class: Alpixel\Bundle\FormBundle\Subscribers\FormCookieSubscriber
+        arguments: ["@session"]
+
+    alpixel_form.form_cookie.form_cookie:
+        class: Alpixel\Bundle\FormBundle\FormCookie\FormCookie
         arguments: ["@session"]
