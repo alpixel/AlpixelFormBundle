@@ -3,6 +3,7 @@
 namespace Alpixel\Bundle\FormBundle\FormCookie;
 
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
@@ -17,9 +18,25 @@ class FormCookie
         $this->session = $session;
     }
 
-    public function getSessionFormName(Form $form)
+    public function getSessionFormName($form)
     {
-        return 'filter_form_'.$form->getConfig()->getName();
+        $name = '';
+        switch (get_class($form)) {
+            case Form::class :
+                $name = $form->getConfig()->getName();
+                break;
+            case FormView::class :
+                $name = $form->vars['name'];
+                break;
+            default:
+                throw new \InvalidArgumentException(sprintf('The argument is not an instance of "%s" or "%s"',
+                    Form::class,
+                    FormView::class
+                ));
+                break;
+        }
+
+        return 'filter_form_'.$name;
     }
 
     public function hasSessionForm($name)
