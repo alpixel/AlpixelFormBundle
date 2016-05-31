@@ -23,7 +23,9 @@ services:
 
     alpixel.subscriber.form_cookie:
         class: Alpixel\Bundle\FormBundle\Subscribers\FormCookieSubscriber
-        arguments: ["@session"]
+        arguments:
+          - "@session"
+          - "@doctrine.orm.entity_manager"
 
     alpixel_form.form_cookie.form_cookie:
         class: Alpixel\Bundle\FormBundle\FormCookie\FormCookie
