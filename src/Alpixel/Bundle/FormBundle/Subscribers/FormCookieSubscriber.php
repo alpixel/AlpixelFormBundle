@@ -37,7 +37,6 @@ class FormCookieSubscriber implements EventSubscriberInterface
     {
         $form = $event->getForm();
         $formName = $this->getSessionName($form);
-
         if ($this->session->has($formName)) {
             $filters = $this->session->get($formName);
             foreach ($filters as $field => &$value) {
@@ -47,6 +46,7 @@ class FormCookieSubscriber implements EventSubscriberInterface
 
                     switch ($fieldType) {
                         case 'alpixel_entity_id':
+                        case 'entity_id':
                             $entityManager = $fieldConfig->getOption('em');
                             if ($entityManager === null) {
                                 $entityManager = $this->entityManager;
