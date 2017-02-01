@@ -5,6 +5,7 @@ namespace Alpixel\Bundle\FormBundle\Type;
 use Alpixel\Bundle\FormBundle\DataTransformer\EntityToIdTransformer;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -57,7 +58,7 @@ class EntityIdType extends AbstractType
 
     public function getParent()
     {
-        return 'text';
+        return TextType::class;
     }
 
     public function getName()
