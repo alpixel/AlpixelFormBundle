@@ -43,10 +43,10 @@ class FormCookieSubscriber implements EventSubscriberInterface
             foreach ($filters as $field => &$value) {
                 if ($form->has($field)) {
                     $fieldConfig = $form->get($field)->getConfig();
-                    $fieldType = $fieldConfig->getType();
+                    $fieldType = $fieldConfig->getType()->getBlockPrefix();
 
                     switch ($fieldType) {
-                        case EntityIdType::class:
+                        case 'alpixel_entity_id':
                             $entityManager = $fieldConfig->getOption('em');
                             if ($entityManager === null) {
                                 $entityManager = $this->entityManager;
@@ -56,14 +56,14 @@ class FormCookieSubscriber implements EventSubscriberInterface
                                 ->getRepository($className)
                                 ->find($value);
                             break;
-                        case EntityType::class:
+                        case 'entity':
                             $entityManager = $fieldConfig->getOption('em');
                             $className = $fieldConfig->getOption('class');
                             $value = $entityManager
                                 ->getRepository($className)
                                 ->find($value);
                             break;
-                        case CheckboxType::class:
+                        case 'checkbox':
                             $value = (bool)$value;
                             break;
                     }
