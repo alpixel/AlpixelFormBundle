@@ -3,10 +3,13 @@
 namespace Alpixel\Bundle\FormBundle\Subscribers;
 
 use Doctrine\ORM\EntityManager;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
@@ -33,44 +36,48 @@ class FormCookieSubscriber implements EventSubscriberInterface
         ];
     }
 
+    protected static function fieldHasType(FormConfigInterface $config, string $type)
+    {
+        $match = false;
+        $innerType = $config->getType()->getInnerType();
+
+        if (get_class($innerType) === $type) {
+            $match = true;
+        } else if ($innerType->getParent() === $type) {
+            $match = true;
+        }
+
+        return $match;
+    }
+
     public function onPreSetData(FormEvent $event)
     {
         $form = $event->getForm();
         $formName = $this->getSessionName($form);
         if ($this->session->has($formName)) {
+            $data = $event->getData();
             $filters = $this->session->get($formName);
-            foreach ($filters as $field => &$value) {
+            foreach ($filters as $field => $value) {
                 if ($form->has($field)) {
                     $fieldConfig = $form->get($field)->getConfig();
-                    $fieldType = $fieldConfig->getType()->getBlockPrefix();
 
-                    switch ($fieldType) {
-                        case 'alpixel_entity_id':
-                        case 'entity_id':
-                            $entityManager = $fieldConfig->getOption('em');
-                            if ($entityManager === null) {
-                                $entityManager = $this->entityManager;
-                            }
-                            $className = $fieldConfig->getOption('class');
-                            $value = $entityManager
-                                ->getRepository($className)
-                                ->find($value);
-                            break;
-                        case 'entity':
-                            $entityManager = $fieldConfig->getOption('em');
-                            $className = $fieldConfig->getOption('class');
-                            $value = $entityManager
-                                ->getRepository($className)
-                                ->find($value);
-                            break;
-                        case 'checkbox':
-                            $value = (bool)$value;
-                            break;
+                    if (self::fieldHasType($fieldConfig, EntityType::class)) {
+                        $entityManager = $fieldConfig->getOption('em');
+                        if ($entityManager === null) {
+                            $entityManager = $this->entityManager;
+                        }
+                        $className = $fieldConfig->getOption('class');
+                        $value = $entityManager
+                            ->getRepository($className)
+                            ->find($value);
+                    } else if (self::fieldHasType($fieldConfig, CheckboxType::class)) {
+                        $value = (bool)$value;
                     }
                 }
-            }
 
-            $event->setData($filters);
+                $data[$field] = $value;
+            }
+            $event->setData($data);
         }
 
         $form->add('reset', SubmitType::class, [
