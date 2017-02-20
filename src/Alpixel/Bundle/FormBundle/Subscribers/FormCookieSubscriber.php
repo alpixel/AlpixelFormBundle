@@ -57,26 +57,29 @@ class FormCookieSubscriber implements EventSubscriberInterface
         if ($this->session->has($formName)) {
             $data = $event->getData();
             $filters = $this->session->get($formName);
-            foreach ($filters as $field => $value) {
-                if ($form->has($field)) {
-                    $fieldConfig = $form->get($field)->getConfig();
+            if (is_array($filters)) {
+                foreach ($filters as $field => $value) {
+                    if ($form->has($field)) {
+                        $fieldConfig = $form->get($field)->getConfig();
 
-                    if (self::fieldHasType($fieldConfig, EntityType::class)) {
-                        $entityManager = $fieldConfig->getOption('em');
-                        if ($entityManager === null) {
-                            $entityManager = $this->entityManager;
+                        if (self::fieldHasType($fieldConfig, EntityType::class)) {
+                            $entityManager = $fieldConfig->getOption('em');
+                            if ($entityManager === null) {
+                                $entityManager = $this->entityManager;
+                            }
+                            $className = $fieldConfig->getOption('class');
+                            $value = $entityManager
+                                ->getRepository($className)
+                                ->find($value);
+                        } else if (self::fieldHasType($fieldConfig, CheckboxType::class)) {
+                            $value = (bool)$value;
                         }
-                        $className = $fieldConfig->getOption('class');
-                        $value = $entityManager
-                            ->getRepository($className)
-                            ->find($value);
-                    } else if (self::fieldHasType($fieldConfig, CheckboxType::class)) {
-                        $value = (bool)$value;
                     }
-                }
 
-                $data[$field] = $value;
+                    $data[$field] = $value;
+                }
             }
+
             $event->setData($data);
         }
 
