@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\DataTransformerInterface;
-use Symfony\Component\Form\Exception\FormException;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -74,7 +73,7 @@ class EntityToIdTransformer implements DataTransformerInterface
     protected function transformSingleEntity($data)
     {
         if (!$this->unitOfWork->isInIdentityMap($data)) {
-            throw new FormException('Entities passed to the choice field must be managed');
+            throw new \Exception('Entities passed to the choice field must be managed');
         }
 
         if ($this->property) {
