@@ -2,6 +2,7 @@
 
 namespace Alpixel\Bundle\FormBundle\Subscribers;
 
+use Alpixel\Bundle\FormBundle\Type\EntityIdType;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -62,7 +63,9 @@ class FormCookieSubscriber implements EventSubscriberInterface
                     if ($form->has($field)) {
                         $fieldConfig = $form->get($field)->getConfig();
 
-                        if (self::fieldHasType($fieldConfig, EntityType::class)) {
+                        if (self::fieldHasType($fieldConfig, EntityType::class)
+                            || self::fieldHasType($fieldConfig, EntityIdType::class)
+                        ) {
                             $entityManager = $fieldConfig->getOption('em');
                             if ($entityManager === null) {
                                 $entityManager = $this->entityManager;
@@ -83,12 +86,16 @@ class FormCookieSubscriber implements EventSubscriberInterface
             $event->setData($data);
         }
 
-        $form->add('reset', SubmitType::class, [
-            'label' => 'Réinitialiser le formulaire',
-            'attr'  => [
-                'class' => 'btn btn-warning reset-cookie-form-action',
-            ],
-        ]);
+        $form->add(
+            'reset',
+            SubmitType::class,
+            [
+                'label' => 'Réinitialiser le formulaire',
+                'attr'  => [
+                    'class' => 'btn btn-warning reset-cookie-form-action',
+                ],
+            ]
+        );
     }
 
     public function onPreSubmit(FormEvent $event)
@@ -114,6 +121,7 @@ class FormCookieSubscriber implements EventSubscriberInterface
 
     private function getSessionName(Form $form)
     {
-        return 'filter_form_' . $form->getConfig()->getName();
+        return 'filter_form_'.$form->getConfig()->getName();
     }
 }
+
